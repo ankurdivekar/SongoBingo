@@ -8,25 +8,25 @@ from Generators.BingoGames_Generator import generate_bingo_games
 start_time = datetime.datetime.now()
 
 # Define the paths for song cutting
-full_songs_dir = Path('Files/FullSongs')
-clipped_music_dir = Path('Files/ClippedSongs')
+full_songs_dir = Path('Files/FullSongs').absolute()
+clipped_music_dir = Path('Files/ClippedSongs').absolute()
 
 # Define the path for song cutting XLS
-xlsx_path = Path('Assets/Index.xlsx')
+xlsx_path = Path('Assets/Index.xlsx').absolute()
 
 # Define the path for backspin sample
-backspin_sample_path = Path('Assets/Backspin_2.mp3')
+backspin_sample_path = Path('Assets/Backspin_2.mp3').absolute()
 
 # Define the path for the bingo card template
-template_path = Path('Assets/Template.jpeg')
+template_path = Path('Assets/Template.jpeg').absolute()
 
 # Define the path for generating games
-games_master_dir = Path('Files/GeneratedGames')
+games_master_dir = Path('Files/GeneratedGames').absolute()
 
 # Define parameters for game generation
-games_to_generate = 10
+games_to_generate = 1
 songs_per_game = 50
-cards_per_game = 25
+cards_per_game = 2
 
 # Parameters for card
 master_code = 200416  # Unique identifier for a particular game

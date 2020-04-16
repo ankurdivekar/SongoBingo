@@ -1,5 +1,3 @@
-import pydub
-from pathlib import Path
 from pydub import AudioSegment
 import pandas as pd
 

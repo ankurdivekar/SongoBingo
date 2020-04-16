@@ -2,6 +2,7 @@ import os
 import shutil
 import random
 import pandas as pd
+import pathlib
 from Generators.BingoCards_Generator import generate_cards
 from Generators.GraphicTools import get_color_pairs
 
@@ -45,16 +46,26 @@ def generate_bingo_games(params):
         # Get a random selection of songs
         random_songs = random.sample(master_song_list, songs_per_game)
 
-        # Shuffle the list and write to xlsx
+        # Shuffle the list
         random.shuffle(random_songs)
+
+        # Write list to xlsx
         df = pd.DataFrame.from_dict({'Song Sequence': random_songs})
         df.to_excel(xls_path, header=True, index=False)
 
+        random_songs_paths = []
+        # Copy files to generated game folder
         for song in random_songs:
             # Copy to songs folder
             old_path = clipped_music_dir / song
             new_path = songs_dir / song
             shutil.copy(old_path, new_path)
+            random_songs_paths.append(new_path)
+
+        # Write list to .m3u playlist
+        playlist_name = f'Playlist_{game_code}.m3u'
+        playlist_path = game_dir / f'Playlist_{game_code}.m3u'
+        create_m3u_playlist(playlist_path, random_songs_paths)
 
         # Create cards
         card_params = {
@@ -71,3 +82,15 @@ def generate_bingo_games(params):
         }
 
         generate_cards(card_params)
+
+
+def create_m3u_playlist(playlist, songs):
+    FORMAT_DESCRIPTOR = "#EXTM3U"
+    RECORD_MARKER = "#EXTINF"
+
+    fp = open(playlist, "w")
+    fp.write(FORMAT_DESCRIPTOR + "\n")
+    for song in songs:
+        fp.write(f'{RECORD_MARKER}:25,{song.stem}\n')
+        fp.write(f'{song}\n')
+    fp.close()

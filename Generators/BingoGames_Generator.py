@@ -2,7 +2,7 @@ import os
 import shutil
 import random
 import pandas as pd
-import pathlib
+from pathlib import Path
 from Generators.BingoCards_Generator import generate_cards
 from Generators.GraphicTools import get_color_pairs
 
@@ -65,7 +65,7 @@ def generate_bingo_games(params):
         # Write list to .m3u playlist
         playlist_name = f'Playlist_{game_code}.m3u'
         playlist_path = game_dir / f'Playlist_{game_code}.m3u'
-        create_m3u_playlist(playlist_path, random_songs_paths)
+        create_m3u_playlist(playlist_path, random_songs_paths, game_dir)
 
         # Create cards
         card_params = {
@@ -80,17 +80,18 @@ def generate_bingo_games(params):
             'fill_dark': color_fills[idx][0],
             'text_size': 16
         }
-
         generate_cards(card_params)
 
 
-def create_m3u_playlist(playlist, songs):
+def create_m3u_playlist(playlist, songs, game_dir):
     FORMAT_DESCRIPTOR = "#EXTM3U"
     RECORD_MARKER = "#EXTINF"
 
     fp = open(playlist, "w")
     fp.write(FORMAT_DESCRIPTOR + "\n")
     for song in songs:
-        fp.write(f'{RECORD_MARKER}:25,{song.stem}\n')
-        fp.write(f'{song}\n')
+        song_name = song.stem
+        song_path = str(song.relative_to(game_dir))
+        fp.write(f'{RECORD_MARKER}:00,{song_name}\n')
+        fp.write(f'{song_path}\n')
     fp.close()

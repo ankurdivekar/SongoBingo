@@ -47,7 +47,7 @@ def get_color_pairs(n_pairs):
     return pairs
 
 
-def get_tile(width, height, text, fill, text_size):
+def get_tile(width, height, text, fill, text_size, text_width=21):
     # Create blank rectangle to write on
     image = Image.new('RGB', (width, height), fill)
     draw = ImageDraw.Draw(image)
@@ -56,7 +56,7 @@ def get_tile(width, height, text, fill, text_size):
     message = text.split('\n')
     msg_para = []
     for m in message:
-        para = textwrap.wrap(m, width=21)
+        para = textwrap.wrap(m, width=text_width)
         msg_para += para
     message = '\n'.join(msg_para)
 

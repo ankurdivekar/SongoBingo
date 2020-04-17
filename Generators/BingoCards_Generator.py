@@ -18,6 +18,8 @@ def generate_cards(params):
     fill_light = params['fill_light']
     text_size = params['text_size']
 
+    fill_avg = tuple([int((l+d)/2) for (l, d) in zip(fill_light, fill_dark)])
+
     # Calculate the dimensions of the grid
     [top_left_x, top_left_y] = (35, 149)
     [bottom_right_x, bottom_right_y] = (927, 637)
@@ -29,6 +31,11 @@ def generate_cards(params):
 
     master_code_height = 25
     master_code_width = 85
+
+    branding_height = 30
+    branding_width = 335 + 80
+    branding_text = "Generated through SongoBingo by DJ AV"
+    promo_text = 'Order a home version by calling up +91 98301 72572'
 
     # print('Grid width:', grid_width, '\nGrid height:', grid_height)
     # print('Tile width:', tile_width, '\nTile height:', tile_height)
@@ -71,11 +78,19 @@ def generate_cards(params):
                 card.paste(tile, (tile_x, tile_y))
 
         # Insert game code
-        code_tile = get_tile(master_code_width, master_code_height, game_code, (255, 255, 255, 0), text_size-3)
-        card.paste(code_tile, (850, 650))
+        code_tile = get_tile(master_code_width, master_code_height, game_code, (255, 255, 255, 0), text_size - 1)
+        card.paste(code_tile, (850, 125))
 
+        # Insert branding
+        branding_tile = get_tile(branding_width, branding_height, branding_text, (255, 255, 255, 0), text_size,
+                             text_width=75)
+        card.paste(branding_tile, (555, 650))
+
+        # Insert promo msg
+        promo_tile = get_tile(branding_width, branding_height, promo_text, (255, 255, 255, 0), text_size,
+                             text_width=75)
+        card.paste(promo_tile, (30, 650))
+
+        # Save card to disk
         card_path = Path.joinpath(card_dir, f'Card_{game_code}_{str(idx+1)}.png')
         card.save(card_path)
-
-
-

@@ -67,9 +67,18 @@ def get_tile(width, height, text, fill, text_size, text_width=21, alignment='cen
     # Calculate the width and height of the text to be drawn, given font size
     w, h = draw.textsize(message, font=font)
 
-    # Calculate the mid points and offset by the upper left corner of the bounding box
-    x = (x2 - x1 - w) / 2 + x1
-    y = (y2 - y1 - h) / 2 + y1
+    if alignment == 'center':
+        # Calculate the mid points and offset by the upper left corner of the bounding box
+        x = (x2 - x1 - w) / 2 + x1
+        y = (y2 - y1 - h) / 2 + y1
+
+    elif alignment == 'right':
+        x = x2 - w + x1
+        y = (y2 - y1 - h) / 2 + y1
+
+    elif alignment == 'left':
+        x = x1
+        y = (y2 - y1 - h) / 2 + y1
 
     # Write the text to the image, where (x,y) is the top left corner of the text
     draw.text((x, y), message, font=font, fill='black', align=alignment)

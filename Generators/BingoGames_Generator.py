@@ -18,11 +18,17 @@ def generate_bingo_games(params):
     n_rows = params['rows_per_card']
     n_cols = params['cols_per_card']
     template_path = params['template_path']
+    predict_results = params['predict_results']
 
     # Create new directory for the generated games
     game_set_dir = 'Games_' + str(master_code)
     games_dir = games_master_dir / game_set_dir
-    games_dir.mkdir(parents=True, exist_ok=True)
+
+    # Delete games_dir if it exists
+    if Path.exists(games_dir):
+        shutil.rmtree(games_dir, ignore_errors=True)
+    # Create fresh games_dir
+    # games_dir.mkdir(parents=True, exist_ok=True)
 
     # Get random color fills
     color_fills = get_color_pairs(games_to_generate)
@@ -37,8 +43,9 @@ def generate_bingo_games(params):
         game_dir = games_dir / f'Game_{game_code}'
         cards_dir = game_dir / 'Cards'
         songs_dir = game_dir / 'Songs'
-        xls_path = game_dir / 'SongList.xlsx'
-
+        playlist_xlsx_path = game_dir / 'SongList.xlsx'
+        card_xlsx_path = game_dir / 'CardsInfo.xlsx'
+        
         # Create directories if they dont exist
         cards_dir.mkdir(parents=True, exist_ok=True)
         songs_dir.mkdir(parents=True, exist_ok=True)
@@ -46,12 +53,15 @@ def generate_bingo_games(params):
         # Get a random selection of songs
         random_songs = random.sample(master_song_list, songs_per_game)
 
+        # Fix the case
+        random_songs = [s.title().replace('Mp3', 'mp3') for s in random_songs]
+
         # Shuffle the list
         random.shuffle(random_songs)
 
-        # Write list to xlsx
+        # Write playlist to xlsx
         df = pd.DataFrame.from_dict({'Song Sequence': random_songs})
-        df.to_excel(xls_path, header=True, index=False)
+        df.to_excel(playlist_xlsx_path, header=True, index=False)
 
         random_songs_paths = []
         # Copy files to generated game folder
@@ -78,7 +88,9 @@ def generate_bingo_games(params):
             'template_path': template_path,
             'fill_light': color_fills[idx][1],
             'fill_dark': color_fills[idx][0],
-            'text_size': 16
+            'text_size': 16,
+            'predict_results': predict_results,
+            'card_xlsx_path': card_xlsx_path,
         }
         generate_cards(card_params)
 

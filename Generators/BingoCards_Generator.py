@@ -1,5 +1,6 @@
 import os
 import random
+import pandas as pd
 from pathlib import Path
 from PIL import Image
 from Generators.GraphicTools import get_tile
@@ -17,8 +18,8 @@ def generate_cards(params):
     fill_dark = params['fill_dark']
     fill_light = params['fill_light']
     text_size = params['text_size']
-
-    fill_avg = tuple([int((l+d)/2) for (l, d) in zip(fill_light, fill_dark)])
+    predict_results = params['predict_results']
+    card_xlsx_path = params['card_xlsx_path']
 
     # Calculate the dimensions of the grid
     [top_left_x, top_left_y] = (35, 149)
@@ -29,8 +30,8 @@ def generate_cards(params):
     tile_width = int(grid_width/n_cols)
     tile_height = int(grid_height/n_rows)
 
-    master_code_height = 25
-    master_code_width = 85
+    card_code_height = 25
+    card_code_width = 250
 
     branding_height = 30
     branding_width = 335 + 80
@@ -47,9 +48,10 @@ def generate_cards(params):
     # Get list of all music files
     for track in os.listdir(music_dir):
         [song_name, artist_name] = track.replace('.mp3', '').replace('.m4a', '').split(' - ')
-        tmp = song_name + '\n----------\n' + artist_name.upper()
-        all_songs.append(tmp)
+        # tmp = song_name + '\n----------\n' + artist_name.upper()
+        all_songs.append(f'{song_name} - {artist_name}')
 
+    df = pd.DataFrame()
     for idx in range(n_cards):
         # print('Generating card no', idx+1)
 
@@ -58,6 +60,13 @@ def generate_cards(params):
 
         # Get a random selection of songs
         random_songs = random.sample(all_songs, n_rows*n_cols)
+
+        if predict_results:
+            # Save card info to txt file
+            col_name = f'Card_{game_code}_{str(idx + 1)}'
+            # tmp_songs = [song.replace('\n----------\n', ' - ') for song in random_songs]
+            # Reverse the list because songs are assigned to grid with pop()
+            df[col_name] = random_songs[::-1]
 
         # Generate the grid
         for row in range(n_rows):
@@ -72,14 +81,20 @@ def generate_cards(params):
                 else:
                     fill = fill_light
 
+                # Get one song
                 tile_song = random_songs.pop()
+                # Format the song name
+                fragments = tile_song.split(' - ')
+                tile_song = f'{fragments[0].title()}\n----------\n{fragments[1].upper()}'
+
                 # Generate tile
                 tile = get_tile(tile_width, tile_height, tile_song, fill, text_size)
                 card.paste(tile, (tile_x, tile_y))
 
-        # Insert game code
-        code_tile = get_tile(master_code_width, master_code_height, game_code, (255, 255, 255, 0), text_size - 1)
-        card.paste(code_tile, (850, 125))
+        # Insert game and card code
+        code_tile = get_tile(card_code_width, card_code_height, f'{game_code}_{idx+1:02}',
+                             (255, 255, 255, 0), text_size - 1, alignment='right')
+        card.paste(code_tile, (675, 125))
 
         # Insert branding
         branding_tile = get_tile(branding_width, branding_height, branding_text, (255, 255, 255, 0), text_size,
@@ -94,3 +109,6 @@ def generate_cards(params):
         # Save card to disk
         card_path = Path.joinpath(card_dir, f'Card_{game_code}_{str(idx+1)}.png')
         card.save(card_path)
+
+    if predict_results:
+        df.to_excel(card_xlsx_path, sheet_name='Cards Info', index=False)

@@ -47,7 +47,7 @@ def get_color_pairs(n_pairs):
     return pairs
 
 
-def get_tile(width, height, text, fill, text_size, text_width=21):
+def get_tile(width, height, text, fill, text_size, text_width=21, alignment='center'):
     # Create blank rectangle to write on
     image = Image.new('RGB', (width, height), fill)
     draw = ImageDraw.Draw(image)
@@ -72,7 +72,7 @@ def get_tile(width, height, text, fill, text_size, text_width=21):
     y = (y2 - y1 - h) / 2 + y1
 
     # Write the text to the image, where (x,y) is the top left corner of the text
-    draw.text((x, y), message, align='center', font=font, fill='black')
+    draw.text((x, y), message, font=font, fill='black', align=alignment)
 
     # Draw the bounding box
     draw.rectangle([x1, y1, x2, y2], outline='white', width=1)

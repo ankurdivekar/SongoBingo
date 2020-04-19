@@ -107,7 +107,7 @@ def generate_cards(params):
         card.paste(promo_tile, (35, 650))
 
         # Save card to disk
-        card_path = Path.joinpath(card_dir, f'Card_{game_code}_{str(idx+1)}.png')
+        card_path = Path.joinpath(card_dir, f'Card_{game_code}_{idx+1:02}.png')
         card.save(card_path)
 
     if predict_results:

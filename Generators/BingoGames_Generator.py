@@ -62,7 +62,7 @@ def generate_bingo_games(params):
 
         # Write playlist to xlsx
         df = pd.DataFrame.from_dict({'Song Sequence': random_songs})
-        df.to_excel(playlist_xlsx_path, header=False, index=False)
+        df.to_excel(playlist_xlsx_path, header=True, index=False)
 
         random_songs_paths = []
         # Copy files to generated game folder

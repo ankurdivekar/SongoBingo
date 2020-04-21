@@ -19,6 +19,7 @@ def generate_bingo_games(params):
     n_cols = params['cols_per_card']
     template_path = params['template_path']
     predict_results = params['predict_results']
+    countdown_path = params['countdown_sample_path']
 
     # Create new directory for the generated games
     game_set_dir = 'Games_' + str(master_code)
@@ -61,7 +62,7 @@ def generate_bingo_games(params):
 
         # Write playlist to xlsx
         df = pd.DataFrame.from_dict({'Song Sequence': random_songs})
-        df.to_excel(playlist_xlsx_path, header=True, index=False)
+        df.to_excel(playlist_xlsx_path, header=False, index=False)
 
         random_songs_paths = []
         # Copy files to generated game folder
@@ -75,7 +76,7 @@ def generate_bingo_games(params):
         # Write list to .m3u playlist
         playlist_name = f'Playlist_{game_code}.m3u'
         playlist_path = game_dir / f'Playlist_{game_code}.m3u'
-        create_m3u_playlist(playlist_path, random_songs_paths, game_dir)
+        create_m3u_playlist(playlist_path, random_songs_paths, game_dir, countdown_path)
 
         # Create cards
         card_params = {
@@ -95,12 +96,17 @@ def generate_bingo_games(params):
         generate_cards(card_params)
 
 
-def create_m3u_playlist(playlist, songs, game_dir):
+def create_m3u_playlist(playlist, songs, game_dir, countdown_path=None):
     FORMAT_DESCRIPTOR = "#EXTM3U"
     RECORD_MARKER = "#EXTINF"
 
     fp = open(playlist, "w")
     fp.write(FORMAT_DESCRIPTOR + "\n")
+
+    if countdown_path:
+        fp.write(f'{RECORD_MARKER}:30,{countdown_path.stem}\n')
+        fp.write(f'{countdown_path}\n')
+
     for song in songs:
         song_name = song.stem
         song_path = str(song.relative_to(game_dir))

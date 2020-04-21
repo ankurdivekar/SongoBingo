@@ -21,12 +21,12 @@ def generate_audio_clips(params):
     output_dir = params['output_dir']
     xlsx_path = params['xlsx_path']
     backspin_path = params['backspin_path']
+    clip_duration_secs = params['clip_duration_secs']
     overwrite = params['overwrite']
 
     # Read the xlsx
     df = pd.read_excel(xlsx_path, converters={'In': str, 'Out': str})
     # print(df)
-
     # Get backspin sample
     backspin = AudioSegment.from_mp3(backspin_path)
 
@@ -44,7 +44,11 @@ def generate_audio_clips(params):
             print('File exists :', clip_path)
         else:
             start = get_time_in_milliseconds(row['In'])
-            end = get_time_in_milliseconds(row['Out'])
+            # If out column isnt present in excel, use clip_duration_secs
+            if 'Out' in df.columns:
+                end = get_time_in_milliseconds(row['Out'])
+            else:
+                end = start + clip_duration_secs * 1000
             # print(row['FileName'], ': Clip from', start, 'seconds to', end, 'seconds - Duration:', end-start, 'seconds')
 
             # Read in song

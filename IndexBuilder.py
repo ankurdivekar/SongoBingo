@@ -13,7 +13,8 @@ full_songs_dir = Path('Files/FullSongs').absolute()
 df = pd.DataFrame(columns=['FileName', 'Artiste', 'Song', 'In', 'Out'])
 
 # Get a list of all files and assign to the dataframe column
-df['FileName'] = [Path(f).stem for f in glob.glob(str(full_songs_dir) + '/*.mp3')]
+
+df['FileName'] = [Path(f).name for f in glob.glob(str(full_songs_dir) + '/*.*')]
 
 # Write out to xlsx
 df.to_excel(xlsx_path, index=0, sheet_name='FileList')

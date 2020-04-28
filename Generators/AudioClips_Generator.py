@@ -44,10 +44,11 @@ def generate_audio_clips(params):
             print('File exists :', clip_path)
         else:
             start = get_time_in_milliseconds(row['In'])
-            # If out column isnt present in excel, use clip_duration_secs
-            if 'Out' in df.columns:
+            # Check if Out column is filled
+            if type(row['Out']) is str:
                 end = get_time_in_milliseconds(row['Out'])
             else:
+                # Cut audio clip of default duration
                 end = start + clip_duration_secs * 1000
             # print(row['FileName'], ': Clip from', start, 'seconds to', end, 'seconds - Duration:', end-start, 'seconds')
 

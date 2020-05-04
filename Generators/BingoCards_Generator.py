@@ -31,7 +31,7 @@ def generate_cards(params):
     tile_height = int(grid_height/n_rows)
 
     card_code_height = 25
-    card_code_width = 230
+    card_code_width = 225
 
     branding_height = 30
     branding_width = 390
@@ -92,9 +92,10 @@ def generate_cards(params):
                 card.paste(tile, (tile_x, tile_y))
 
         # Insert game and card code
-        code_tile = get_tile(tile_width, card_code_height, f'{game_code}_{idx+1:02}',
+        code_tile = get_tile(card_code_width, card_code_height, f'{game_code}_{idx+1:02}',
                              (255, 255, 255, 0), text_size, alignment='right')
-        card.paste(code_tile, (tile_x, 125))
+        code_tile = code_tile.rotate(90, Image.NEAREST, expand=1)
+        card.paste(code_tile, (10, 150))
 
         # Insert branding
         branding_tile = get_tile(branding_width, branding_height, branding_text, (255, 255, 255, 0), text_size,

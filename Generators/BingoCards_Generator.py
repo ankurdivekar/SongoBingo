@@ -1,8 +1,9 @@
 import os
+import numpy as np
 import random
 import pandas as pd
 from pathlib import Path
-from PIL import Image
+from PIL import Image, ImageOps
 from Generators.GraphicTools import get_tile
 
 
@@ -27,8 +28,8 @@ def generate_cards(params):
     grid_width = bottom_right_x - top_left_x
     grid_height = bottom_right_y - top_left_y
 
-    tile_width = int(grid_width/n_cols)
-    tile_height = int(grid_height/n_rows)
+    tile_width = int(np.ceil(grid_width/n_cols))
+    tile_height = int(np.ceil(grid_height/n_rows))
 
     card_code_height = 25
     card_code_width = 225
@@ -75,11 +76,14 @@ def generate_cards(params):
                 tile_x = top_left_x + col*tile_width
                 tile_y = top_left_y + row*tile_height
 
+                text_color = 'black'
                 # Calculate the fill for the tile
                 if row % 2 == col % 2:
                     fill = fill_dark
+                    text_color = 'white'
                 else:
                     fill = fill_light
+                    text_color = 'black'
 
                 # Get one song
                 tile_song = random_songs.pop()
@@ -88,7 +92,7 @@ def generate_cards(params):
                 tile_song = f'{fragments[0].title()}\n----------\n{fragments[1].upper()}'
 
                 # Generate tile
-                tile = get_tile(tile_width, tile_height, tile_song, fill, text_size)
+                tile = get_tile(tile_width, tile_height, tile_song, fill, text_size, text_color=text_color, add_tickbox=True)
                 card.paste(tile, (tile_x, tile_y))
 
         # Insert game and card code
@@ -99,13 +103,16 @@ def generate_cards(params):
 
         # Insert branding
         branding_tile = get_tile(branding_width, branding_height, branding_text, (255, 255, 255, 0), text_size,
-                             alignment='right', text_width=75)
+                                 alignment='right', text_width=75)
         card.paste(branding_tile, (535, 650))
 
         # Insert promo msg
         promo_tile = get_tile(tile_width*2, branding_height, promo_text, (255, 255, 255, 0), text_size,
                              alignment='left', text_width=75)
         card.paste(promo_tile, (35, 650))
+
+        # Add border if needed
+        # card = ImageOps.expand(card, border=3, fill='black')
 
         # Save card to disk
         card_path = Path.joinpath(card_dir, f'Card_{game_code}_{idx+1:02}.png')

@@ -123,7 +123,7 @@ def get_tile(width, height, text, fill, text_size, text_color='black', text_widt
         tickbox_size = int(np.ceil(width/15))
         tickbox_black = Image.new('RGB', (tickbox_size, tickbox_size), 'black')
         tickbox_white = Image.new('RGB', (tickbox_size-2, tickbox_size-2), 'white')
-        image.paste(tickbox_black, (width - 5 - tickbox_size, 5))
-        image.paste(tickbox_white, (width - 5 - tickbox_size + 1, 5+1))
+        image.paste(tickbox_black, (width-5-tickbox_size+1, 5))
+        image.paste(tickbox_white, (width-5-tickbox_size+2, 5+1))
 
     return image

@@ -19,7 +19,6 @@ def generate_cards(params):
     fill_dark = params['fill_dark']
     fill_light = params['fill_light']
     text_size = params['text_size']
-    predict_results = params['predict_results']
     card_xlsx_path = params['card_xlsx_path']
 
     # Calculate the dimensions of the grid
@@ -62,12 +61,10 @@ def generate_cards(params):
         # Get a random selection of songs
         random_songs = random.sample(all_songs, n_rows*n_cols)
 
-        if predict_results:
-            # Save card info to txt file
-            col_name = f'Card_{game_code}_{str(idx + 1)}'
-            # tmp_songs = [song.replace('\n----------\n', ' - ') for song in random_songs]
-            # Reverse the list because songs are assigned to grid with pop()
-            df[col_name] = random_songs[::-1]
+        # Save card info to dataframe
+        col_name = f'Card_{game_code}_{str(idx + 1)}'
+        # Reverse the list because songs are assigned to grid with pop()
+        df[col_name] = random_songs[::-1]
 
         # Generate the grid
         for row in range(n_rows):
@@ -118,5 +115,5 @@ def generate_cards(params):
         card_path = Path.joinpath(card_dir, f'Card_{game_code}_{idx+1:02}.png')
         card.save(card_path)
 
-    if predict_results:
-        df.to_excel(card_xlsx_path, sheet_name='Cards Info', index=False)
+    # Save card info to XLSX
+    df.to_excel(card_xlsx_path, sheet_name='Cards Info', index=False)

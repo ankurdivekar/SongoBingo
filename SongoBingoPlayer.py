@@ -1,10 +1,13 @@
 # Importing Required Modules & libraries
-from tkinter import *
-from Player.GUI_Builder import MusicPlayer
+import tkinter as tk
+from Player.GUI_Builder import SBPlayer
+
+simulate_music_files = False
 
 # Creating TK Container
-root = Tk()
-# Passing Root to MusicPlayer Class
-MusicPlayer(root)
+root = tk.Tk()
+player = SBPlayer(root, simulate_music_files)
+player.focus_set()
+
 # Root Window Looping
 root.mainloop()

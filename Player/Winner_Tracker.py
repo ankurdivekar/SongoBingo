@@ -122,26 +122,32 @@ class GameTracker:
         self.card_idxs = []
         df = pd.read_excel(self.game_dir / 'CardsInfo.xlsx')
         n_cards = df.shape[1]
-
         card_name = cards_dir.parents[0].name.replace('Game_', 'Card_')
 
         for i in range(n_cards):
             songs = df[f'{card_name}_{i + 1}'].tolist()
             song_idxs = [self.playlist.index(s.title().replace('\n', '')) for s in songs]
-            self. card_idxs.append(song_idxs)
+            self.card_idxs.append(song_idxs)
 
         # Get game prizes
         self.game_prizes = get_game_prize()
 
-    def song_played(self, song, logger):
-        # Get index of song played
-        song_idx = self.playlist.index(song.replace('.mp3', ''))
+    def valid_song_played(self, song_file, logger):
+        status = False
+        song = song_file.replace('.mp3', '')
+        if song in self.playlist:
+            # Get index of song played
+            song_idx = self.playlist.index(song)
 
-        # Scratch the current song on applicable cards
-        for card in self.card_idxs:
-            if song_idx in card:
-                card[card.index(song_idx)] = None
+            # Scratch the current song on applicable cards
+            for card in self.card_idxs:
+                if song_idx in card:
+                    card[card.index(song_idx)] = None
 
-        # Check if any new winners have happened
-        for prize in self.game_prizes:
-            prize = check_winners(prize, self.card_idxs, logger)
+            # Check if any new winners have happened
+            for prize in self.game_prizes:
+                prize = check_winners(prize, self.card_idxs, logger)
+            return True
+        else:
+            logger.insert(END, f'Song not found on cards: {song_file}')
+            return False

@@ -53,7 +53,7 @@ def generate_audio_clips(params):
             # print(row['FileName'], ': Clip from', start, 'seconds to', end, 'seconds - Duration:', end-start, 'seconds')
 
             # Read in song
-            song = AudioSegment.from_mp3(song_path)
+            song = AudioSegment.from_file(song_path)
 
             # Extract the clip
             extract = song[start:end]

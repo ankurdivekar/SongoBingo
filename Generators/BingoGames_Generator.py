@@ -18,7 +18,6 @@ def generate_bingo_games(params):
     n_rows = params['rows_per_card']
     n_cols = params['cols_per_card']
     template_path = params['template_path']
-    predict_results = params['predict_results']
     countdown_path = params['countdown_sample_path']
 
     # Create new directory for the generated games
@@ -90,7 +89,6 @@ def generate_bingo_games(params):
             'fill_light': color_fills[idx][1],
             'fill_dark': color_fills[idx][0],
             'text_size': 16,
-            'predict_results': predict_results,
             'card_xlsx_path': card_xlsx_path,
         }
         generate_cards(card_params)
